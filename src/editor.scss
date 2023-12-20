@@ -1,0 +1,22 @@
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-buytiti-buytitiwoocommerce {
+	border: 1px dotted #f00;
+}
+
+.discount-box{
+	position: absolute;
+	top: 24px;
+	right: 0;
+	background-color: white;
+	color: orange;
+	padding: 1px;
+	font-size: 12px;
+	border: red 1px solid;
+	width: 2.3rem;
+	text-align: center;
+  }

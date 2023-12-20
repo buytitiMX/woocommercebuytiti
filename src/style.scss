@@ -1,0 +1,134 @@
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+
+.wp-block-buytiti-buytitiwoocommerce {
+	color: #21759b;
+	padding: 1px;
+	max-width: 80% !important;
+}
+.product-item {
+	display: flex;
+	flex-direction: column;
+	width: 16rem;
+}
+
+.container-price{
+	display: flex;
+}
+
+.regular-price{
+	margin-right: 1rem;
+}
+
+.sale-price{
+	color: red;
+	font-weight: bold;
+}
+
+.grid-container {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	grid-template-rows: repeat(2, 1fr);
+	gap: 10px;
+	width: 100%; 
+}
+
+.image-container{
+	position: relative;
+	width: 15.9rem;
+    height: 20rem;
+    background-color: white;
+    border: #E4E4E4.5px solid;
+}
+
+.image-container:hover{
+	cursor: pointer;
+}
+
+.img-size{
+	width: 14rem;
+	margin-top: 3rem;
+	padding: .5rem;
+}
+
+.name-buytiti{
+  text-transform: uppercase;
+  color: #585858;
+  font-size: .8rem;
+  text-align: left;
+  padding-right: .5rem;
+}
+
+.sku{
+	color: black;
+  font-size: .8rem;
+}
+
+.regular-price{
+	color: #767676;
+	font-size: .9rem;
+}
+
+.offer-box{
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: red;
+  color: white;
+  padding: 2px;
+  font-size: 12px;
+}
+
+.discount-box{
+  position: absolute;
+  top: 24px;
+  right: 0;
+  background-color: white;
+  color: #FF7942;
+  padding: 1px;
+  font-size: 12px;
+  border: red 1px solid;
+  width: 2.3rem;
+  text-align: center;
+}
+
+.btn-addtocart:hover,
+.btn-addtocart:focus {
+  -webkit-animation: pulse 1s;
+          animation: pulse 1s;
+  box-shadow: 0 0 0 1em rgba(255, 255, 255, 0);
+}
+
+@-webkit-keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--hover);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--hover);
+  }
+}
+
+.btn-addtocart {
+  border: none;
+  background-color: #FF7942 ;
+  --color: #ef6eae;
+  --hover: #ef8f6e;
+  height: 2rem;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  color: white;
+  font-weight: bold;
+  padding-top: 6px;
+}
+
+.btn-addtocart:hover{
+  cursor: pointer;
+}

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "buytiti/buytitiwoocommerce",
+  "version": "0.1.0",
+  "title": "Buytiti - WooCommerce",
+  "category": "widgets",
+  "icon": "store",
+  "description": "Este plugin añade la estructura para traer los productos activos de woocommerce",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "textdomain": "buytitiwoocommerce",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "viewScript": "file:./view.js",
+  "attributes": {
+    "products": {
+      "type": "array",
+      "default": []
+    },
+    "categories": {
+      "type": "array",
+      "default": []
+    },
+    "selectedCategory": {
+      "type": "string",
+      "default": ""
+    },
+    "filter": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
