@@ -121,10 +121,20 @@
   color: white;
   font-weight: bold;
   padding-top: 6px;
+  width: 13rem;
 }
 
 .btn-addtocart:hover {
   cursor: pointer;
+}
+
+.quantity-input-container {
+  display: flex;
+}
+
+.number-input {
+  width: 2.5rem;
+  margin-right: 0.5rem;
 }
 
 /*# sourceMappingURL=style-index.css.map*/

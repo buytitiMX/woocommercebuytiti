@@ -81,8 +81,10 @@ const MyWooCommerceBlock = ({
     setSelectedCategory('');
   };
   const handleAddToCart = async productId => {
+    const quantityInput = document.getElementById(`quantity-${productId}`);
+    const quantity = quantityInput ? parseInt(quantityInput.value, 10) : 1;
     try {
-      const response = await fetch(`http://localhost/wordpress/carrito/?add-to-cart=${productId}`, {
+      const response = await fetch(`http://localhost/wordpress/carrito/?add-to-cart=${productId}&quantity=${quantity}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,7 +92,7 @@ const MyWooCommerceBlock = ({
         },
         body: JSON.stringify({
           product_id: productId,
-          quantity: 1
+          quantity: quantity
         })
       });
       if (!response.ok) {
@@ -126,7 +128,8 @@ const MyWooCommerceBlock = ({
     className: "grid-container"
   }, filteredProducts.map(product => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     key: product.id,
-    className: "product-item"
+    className: "product-item",
+    "data-product-id": product.id
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "image-container"
   }, product.prices.sale_price && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
@@ -159,11 +162,24 @@ const MyWooCommerceBlock = ({
     className: "sale-price"
   }, product.prices.currency_prefix, (product.prices.sale_price / 100).toFixed(2))) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "price"
-  }, product.prices.currency_prefix, (product.prices.price / 100).toFixed(2)), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
+  }, product.prices.currency_prefix, (product.prices.price / 100).toFixed(2)), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "quantity-container"
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", {
+    htmlFor: `quantity-${product.id}`
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('', 'tu-texto-localizacion')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "quantity-input-container"
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("input", {
+    className: "number-input",
+    type: "number",
+    id: `quantity-${product.id}`,
+    name: `quantity-${product.id}`,
+    min: "1",
+    defaultValue: "1"
+  }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
     className: "btn-addtocart",
     isPrimary: true,
     onClick: () => handleAddToCart(product.id)
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Añadir al carrito', 'tu-texto-localizacion')))))));
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Añadir al carrito', 'tu-texto-localizacion')))))))));
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MyWooCommerceBlock);
 
@@ -250,7 +266,7 @@ const MyWooCommerceBlockSave = ({
   } = attributes;
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     ...useBlockProps.save()
-  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "grid-container"
   }, products.map(product => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     key: product.id,
@@ -260,17 +276,25 @@ const MyWooCommerceBlockSave = ({
     className: "image-container"
   }, product.prices.sale_price && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "offer-box"
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Oferta', 'tu-texto-localizacion')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Oferta', 'tu-texto-localizacion')), product.prices.sale_price ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "discount-box"
   }, `-${Math.round((product.prices.regular_price - product.prices.sale_price) / product.prices.regular_price * 100)}%`), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("a", {
     href: product.permalink,
     target: "_blank",
     rel: "noopener noreferrer"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
-    class: "img-size",
+    className: "img-size",
     src: product.images[0].src,
     "data-original-src": product.images[0].src,
     "data-hover-src": product.images[1].src,
+    alt: product.name
+  }))) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("a", {
+    href: product.permalink,
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("img", {
+    className: "img-size",
+    src: product.images[0].src,
     alt: product.name
   }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "name-buytiti"
@@ -284,9 +308,22 @@ const MyWooCommerceBlockSave = ({
     className: "sale-price"
   }, product.prices.currency_prefix, (product.prices.sale_price / 100).toFixed(2))) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "price"
-  }, product.prices.currency_prefix, (product.prices.price / 100).toFixed(2)), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
+  }, product.prices.currency_prefix, (product.prices.price / 100).toFixed(2)), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "quantity-container"
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", {
+    htmlFor: `quantity-${product.id}`
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('', 'tu-texto-localizacion')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "quantity-input-container"
+  }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("input", {
+    className: "number-input",
+    type: "number",
+    id: `quantity-${product.id}`,
+    name: `quantity-${product.id}`,
+    min: "1",
+    value: "1"
+  }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
     className: "btn-addtocart"
-  }, "A\xF1adir al carrito"))))));
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Añadir al carrito', 'tu-texto-localizacion'))))))));
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MyWooCommerceBlockSave);
 

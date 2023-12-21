@@ -7,9 +7,15 @@ document.addEventListener('DOMContentLoaded', event => {
   const addToCartButtons = document.querySelectorAll('.product-item button');
   addToCartButtons.forEach(button => {
     button.addEventListener('click', async event => {
-      const productId = event.target.parentElement.getAttribute('data-product-id');
+      const productContainer = event.target.closest('.product-item'); // Utiliza closest para obtener el contenedor más cercano
+      const productId = productContainer.getAttribute('data-product-id');
+      const quantityInput = productContainer.querySelector('input[type="number"]');
+      const quantity = quantityInput ? parseInt(quantityInput.value, 10) : 1;
+
+      // Asegúrate de que el valor del input se esté capturando correctamente
+      console.log('Valor actual del input:', quantityInput.value);
       try {
-        const response = await fetch(`http://localhost/wordpress/carrito/?add-to-cart=${productId}`, {
+        const response = await fetch(`http://localhost/wordpress/carrito/?add-to-cart=${productId}&quantity=${quantity}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -17,7 +23,7 @@ document.addEventListener('DOMContentLoaded', event => {
           },
           body: JSON.stringify({
             product_id: productId,
-            quantity: 1
+            quantity: quantityInput ? parseInt(quantityInput.value, 10) : 1
           })
         });
         if (!response.ok) {
