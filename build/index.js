@@ -31,10 +31,10 @@ const MyWooCommerceBlock = ({
 }) => {
   const {
     products = [],
-    categories
+    categories,
+    selectedCategory,
+    filter
   } = attributes;
-  const [selectedCategory, setSelectedCategory] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
-  const [filter, setFilter] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     const fetchWooCommerceProducts = async () => {
@@ -71,14 +71,20 @@ const MyWooCommerceBlock = ({
     fetchWooCommerceCategories();
   }, [setAttributes]);
   const handleCategoryChange = value => {
-    setSelectedCategory(value);
+    setAttributes({
+      selectedCategory: value
+    });
   };
   const handleFilterClick = () => {
-    setFilter(true);
+    setAttributes({
+      filter: true
+    });
   };
   const handleResetFilter = () => {
-    setFilter(false);
-    setSelectedCategory('');
+    setAttributes({
+      filter: false,
+      selectedCategory: ''
+    });
   };
   const handleAddToCart = async productId => {
     const quantityInput = document.getElementById(`quantity-${productId}`);
@@ -103,7 +109,7 @@ const MyWooCommerceBlock = ({
       console.error('Error al añadir el producto al carrito:', error.message);
     }
   };
-  const filteredProducts = filter && selectedCategory ? products.filter(product => product.categories && product.categories.some(category => category.id === Number(selectedCategory))) : products;
+  const filteredProducts = filter && selectedCategory ? products.filter(product => product.categories && product.categories.some(category => category.id === parseInt(selectedCategory, 10))) : products;
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.useBlockProps)()
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InspectorControls, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.PanelBody, {
@@ -262,13 +268,18 @@ const MyWooCommerceBlockSave = ({
   attributes
 }) => {
   const {
-    products
+    products,
+    selectedCategory,
+    filter
   } = attributes;
+
+  // Utiliza la misma lógica de filtrado
+  const filteredProducts = filter && selectedCategory ? products.filter(product => product.categories && product.categories.some(category => category.id === parseInt(selectedCategory, 10))) : products;
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     ...useBlockProps.save()
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "grid-container"
-  }, products.map(product => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, filteredProducts.map(product => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     key: product.id,
     className: "product-item",
     "data-product-id": product.id

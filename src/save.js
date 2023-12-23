@@ -2,12 +2,20 @@ const { useBlockProps } = wp.blockEditor;
 import { __ } from '@wordpress/i18n';
 
 const MyWooCommerceBlockSave = ({ attributes }) => {
-  const { products } = attributes;
+  const { products, selectedCategory, filter } = attributes;
+
+  // Utiliza la misma lógica de filtrado
+  const filteredProducts = filter && selectedCategory
+    ? products.filter(product => 
+        product.categories && 
+        product.categories.some(category => category.id === parseInt(selectedCategory, 10))
+      )
+    : products;
 
   return (
     <div {...useBlockProps.save()}>
       <div className="grid-container">
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <div key={product.id} className="product-item" data-product-id={product.id}>
             <div className="image-container">
               {product.prices.sale_price && <div className="offer-box">{__('Oferta', 'tu-texto-localizacion')}</div>}

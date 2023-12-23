@@ -4,9 +4,7 @@ import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl, Button } from '@wordpress/components';
 
 const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
-  const { products = [], categories } = attributes;
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [filter, setFilter] = useState(false);
+  const { products = [], categories, selectedCategory, filter } = attributes;
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,16 +45,15 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
   }, [setAttributes]);
 
   const handleCategoryChange = (value) => {
-    setSelectedCategory(value);
+    setAttributes({ selectedCategory: value });
   };
 
   const handleFilterClick = () => {
-    setFilter(true);
+    setAttributes({ filter: true });
   };
 
   const handleResetFilter = () => {
-    setFilter(false);
-    setSelectedCategory('');
+    setAttributes({ filter: false, selectedCategory: '' });
   };
 
   const handleAddToCart = async (productId) => {
@@ -89,7 +86,7 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
   const filteredProducts = filter && selectedCategory
     ? products.filter(product => 
         product.categories && 
-        product.categories.some(category => category.id === Number(selectedCategory))
+        product.categories.some(category => category.id === parseInt(selectedCategory, 10))
       )
     : products;
 
