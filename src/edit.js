@@ -56,11 +56,27 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
     setAttributes({ filter: false, selectedCategory: '' });
   };
 
+  const [showAlert, setShowAlert] = useState(false);
+  const [errorAlert, setErrorAlert] = useState(false);
+
+
   const handleAddToCart = async (productId) => {
     const quantityInput = document.getElementById(`quantity-${productId}`);
     const quantity = quantityInput ? parseInt(quantityInput.value, 10) : 1;
 
     try {
+      // Obtener el producto actual
+      const product = filteredProducts.find((p) => p.id === productId);
+
+      // Verificar si la cantidad seleccionada supera el stock máximo
+      if (product.add_to_cart && product.add_to_cart.maximum && quantity > product.add_to_cart.maximum) {
+        setErrorAlert(`Error: Este artículo tiene solo ${product.add_to_cart.maximum} unidades en stock.`);
+        setTimeout(() => {
+          setErrorAlert(false);
+        }, 4000);
+        return;
+      }
+
       const response = await fetch(`http://localhost/wordpress/carrito/?add-to-cart=${productId}&quantity=${quantity}`, {
         method: 'POST',
         headers: {
@@ -77,11 +93,22 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
         throw new Error(`Error al añadir el producto al carrito: ${response.statusText}`);
       }
 
+      setShowAlert(true);
+
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 5000);
+
       console.log(`Producto agregado al carrito: ${productId}`);
     } catch (error) {
       console.error('Error al añadir el producto al carrito:', error.message);
+      setErrorAlert(`Error: ${error.message}`);
+      setTimeout(() => {
+        setErrorAlert(false);
+      }, 5000);
     }
   };
+  
   
   const filteredProducts = filter && selectedCategory
     ? products.filter(product => 
@@ -112,8 +139,18 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
       </InspectorControls>
       {loading ? (
         <p>{__('Cargando productos...', 'tu-texto-localizacion')}</p>
-      ) : (
-        <div>
+        ) : (
+          <div>
+            {showAlert && (
+              <div className="alert" style={{ backgroundColor: '#FF7942', color: 'white' }}>
+                Se añadió tu producto correctamente
+              </div>
+            )}
+            {errorAlert && (
+        <div className="alert" style={{ backgroundColor: '#FF0000', color: 'white' }}>
+          {errorAlert}
+        </div>
+      )}
           <div className="grid-container">
             {filteredProducts.map((product) => (
               <div key={product.id} className="product-item" data-product-id={product.id}>

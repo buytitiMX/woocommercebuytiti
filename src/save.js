@@ -14,6 +14,12 @@ const MyWooCommerceBlockSave = ({ attributes }) => {
 
   return (
     <div {...useBlockProps.save()}>
+      <div id="success-alert" style="display: none; background-color: #28a745; color: white;">
+      ✓ Se añadió tu producto correctamente
+      </div>
+      <div id="error-alert" style="display: none; background-color: red; color: white;">
+        X Error
+      </div>
       <div className="grid-container">
         {filteredProducts.map((product) => (
           <div key={product.id} className="product-item" data-product-id={product.id}>

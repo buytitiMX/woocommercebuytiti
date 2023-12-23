@@ -86,10 +86,23 @@ const MyWooCommerceBlock = ({
       selectedCategory: ''
     });
   };
+  const [showAlert, setShowAlert] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [errorAlert, setErrorAlert] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const handleAddToCart = async productId => {
     const quantityInput = document.getElementById(`quantity-${productId}`);
     const quantity = quantityInput ? parseInt(quantityInput.value, 10) : 1;
     try {
+      // Obtener el producto actual
+      const product = filteredProducts.find(p => p.id === productId);
+
+      // Verificar si la cantidad seleccionada supera el stock máximo
+      if (product.add_to_cart && product.add_to_cart.maximum && quantity > product.add_to_cart.maximum) {
+        setErrorAlert(`Error: Este artículo tiene solo ${product.add_to_cart.maximum} unidades en stock.`);
+        setTimeout(() => {
+          setErrorAlert(false);
+        }, 4000);
+        return;
+      }
       const response = await fetch(`http://localhost/wordpress/carrito/?add-to-cart=${productId}&quantity=${quantity}`, {
         method: 'POST',
         headers: {
@@ -104,9 +117,17 @@ const MyWooCommerceBlock = ({
       if (!response.ok) {
         throw new Error(`Error al añadir el producto al carrito: ${response.statusText}`);
       }
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 5000);
       console.log(`Producto agregado al carrito: ${productId}`);
     } catch (error) {
       console.error('Error al añadir el producto al carrito:', error.message);
+      setErrorAlert(`Error: ${error.message}`);
+      setTimeout(() => {
+        setErrorAlert(false);
+      }, 5000);
     }
   };
   const filteredProducts = filter && selectedCategory ? products.filter(product => product.categories && product.categories.some(category => category.id === parseInt(selectedCategory, 10))) : products;
@@ -130,7 +151,19 @@ const MyWooCommerceBlock = ({
     onClick: handleFilterClick
   }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Filtrar', 'tu-texto-localizacion')), filter && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
     onClick: handleResetFilter
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Limpiar filtro', 'tu-texto-localizacion')))), loading ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Cargando productos...', 'tu-texto-localizacion')) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Limpiar filtro', 'tu-texto-localizacion')))), loading ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Cargando productos...', 'tu-texto-localizacion')) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, showAlert && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "alert",
+    style: {
+      backgroundColor: '#FF7942',
+      color: 'white'
+    }
+  }, "Se a\xF1adi\xF3 tu producto correctamente"), errorAlert && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "alert",
+    style: {
+      backgroundColor: '#FF0000',
+      color: 'white'
+    }
+  }, errorAlert), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "grid-container"
   }, filteredProducts.map(product => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     key: product.id,
@@ -278,6 +311,12 @@ const MyWooCommerceBlockSave = ({
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     ...useBlockProps.save()
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    id: "success-alert",
+    style: "display: none; background-color: #28a745; color: white;"
+  }, "\u2713 Se a\xF1adi\xF3 tu producto correctamente"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    id: "error-alert",
+    style: "display: none; background-color: red; color: white;"
+  }, "X Error"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "grid-container"
   }, filteredProducts.map(product => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     key: product.id,
