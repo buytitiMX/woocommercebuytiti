@@ -13,7 +13,7 @@
 .product-item {
 	display: flex;
 	flex-direction: column;
-	width: 16rem;
+	width: 15rem;
   margin-bottom: 1.5rem;
 }
 
@@ -30,17 +30,22 @@
 	font-weight: bold;
 }
 
+.price{
+  color: #FF7942;
+  font-weight: bold;
+}
+
 .grid-container {
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
-	grid-template-rows: repeat(2, 1fr);
+	grid-template-rows: repeat(3, 1fr);
 	gap: 10px;
 	width: 100%; 
 }
 
 .image-container{
 	position: relative;
-	width: 15.9rem;
+	width: 15rem;
     height: 18rem;
     background-color: white;
     border: #E4E4E4.5px solid;
@@ -51,14 +56,13 @@
 }
 
 .img-size{
-	width: 13rem;
-	margin-top: 3rem;
+	width: 11rem;
+  margin-top: 3rem;
 	padding: .5rem;
-  margin-left: 1rem;
+  margin-left: 1.5rem;
 }
 
 .name-buytiti{
-  text-transform: uppercase;
   color: #585858;
   font-size: .8rem;
   text-align: left;
@@ -93,7 +97,7 @@
   color: #FF7942;
   padding: 1px;
   font-size: 12px;
-  border: red 1px solid;
+  border: #FF7942 1px solid;
   width: 2.3rem;
   text-align: center;
 }
@@ -143,4 +147,35 @@
 .number-input{
   width: 2.5rem;
   margin-right: .5rem;
+  border: #FF7942 solid 1px;
+}
+
+.stock-alert{
+  color: #FF7942;
+  font-size: .8rem;
+  border: solid #FF7942 1px;
+  width: 7.1rem;
+  text-align: center;
+}
+
+.new-label{
+  background-color: #F2FFF6;
+  border: 1px solid #058427;
+  color: #058427;
+  font-size: .8rem;
+  width: 3rem;
+  text-align: center;
+}
+
+.attribute-category{
+  text-transform: uppercase;
+  font-weight: 500;
+  color: black;
+  font-size: .9rem;
+  text-align: start;
+  letter-spacing: .3px;
+}
+
+.categoria{
+  color: #4A4A4A;
 }

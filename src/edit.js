@@ -10,14 +10,36 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
   useEffect(() => {
     const fetchWooCommerceProducts = async () => {
       try {
-        const response = await fetch('http://localhost/wordpress/wp-json/wc/store/products');
+        const response = await fetch('http://localhost/wordpress/wp-json/wc/store/products?per_page=100');
 
         if (!response.ok) {
           throw new Error(`Error en la solicitud: ${response.statusText}`);
         }
 
         const data = await response.json();
-        setAttributes({ products: data.slice(0, 10) });
+        const productsWithIsNew = await Promise.all(
+          data.map(async (product) => {
+            try {
+              const productResponse = await fetch(`http://localhost/wordpress/wp-json/wp/v2/product/${product.id}`);
+              if (!productResponse.ok) {
+                throw new Error(`Error en la solicitud de producto: ${productResponse.statusText}`);
+              }
+              const productData = await productResponse.json();
+              const isNew = isProductNew(productData.date);
+        
+              // Add attribute name and category to the product object
+              const attributeName = product.attributes[0]?.name || 'Buytiti';
+              const categoryName = product.categories[0]?.name;
+        
+              return { ...product, isNew, attributeName, categoryName };
+            } catch (error) {
+              console.error(`Error al obtener información del producto ${product.id}: ${error.message}`);
+              return product;
+            }
+          })
+        );
+
+        setAttributes({ products: productsWithIsNew });
         setLoading(false);
       } catch (error) {
         console.error('Error fetching WooCommerce products:', error.message);
@@ -54,6 +76,13 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
 
   const handleResetFilter = () => {
     setAttributes({ filter: false, selectedCategory: '' });
+  };
+
+  const isProductNew = (productDate) => {
+    const SEVEN_DAYS_IN_MS = 7 * 24 * 60 * 60 * 1000;
+    const productTimestamp = new Date(productDate).getTime();
+    const currentTimestamp = new Date().getTime();
+    return currentTimestamp - productTimestamp < SEVEN_DAYS_IN_MS;
   };
 
   const [showAlert, setShowAlert] = useState(false);
@@ -155,10 +184,18 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
             {filteredProducts.map((product) => (
               <div key={product.id} className="product-item" data-product-id={product.id}>
                 <div className="image-container">
-                  {product.prices.sale_price && (
-                    <div className="offer-box">{__('Oferta', 'tu-texto-localizacion')}</div>
+                {product.add_to_cart && product.add_to_cart.maximum && product.add_to_cart.maximum < 10 && (
+                  <div className="stock-alert">{__('Pocas existencias', 'tu-texto-localizacion')}</div>
+                )}
+                {product.isNew && (
+                    <div className="new-label">{__('Nuevo', 'tu-texto-localizacion')}</div>
                   )}
-                  <div className="discount-box">{`-${Math.round(((product.prices.regular_price - product.prices.sale_price) / product.prices.regular_price) * 100)}%`}</div>
+                  {product.prices.sale_price !== product.prices.regular_price && (
+                 <div>
+                   <div className="offer-box">{__('Oferta', 'tu-texto-localizacion')}</div>
+                   <div className="discount-box">{`-${Math.round(((product.prices.regular_price - product.prices.sale_price) / product.prices.regular_price) * 100)}%`}</div>
+                 </div>
+                )}
                   <a href={product.permalink} target="_blank" rel="noopener noreferrer">
                     <img
                       className='img-size'
@@ -169,20 +206,25 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
                     />
                   </a>
                 </div>
+                <div className="attribute-category">
+                 <span>{product.attributeName}</span>
+                 {product.categoryName && <span> - </span>}
+                 {product.categoryName && <span className="categoria">{product.categoryName}</span>}
+                </div>
                 <div className='name-buytiti'>{product.name}</div>
                 <div className="sku">SKU: {product.sku}</div>
-                {product.prices.sale_price ? (
-                  <div className='container-price'>
-                    <div className="regular-price">
-                      <del>{product.prices.currency_prefix}{(product.prices.regular_price / 100).toFixed(2)}</del>
-                    </div>
-                    <div className="sale-price">
-                      {product.prices.currency_prefix}{(product.prices.sale_price / 100).toFixed(2)}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="price">{product.prices.currency_prefix}{(product.prices.price / 100).toFixed(2)}</div>
-                )}
+                {product.prices.sale_price !== product.prices.regular_price ? (
+                <div className='container-price'>
+                  <div className="regular-price">
+                  <del>{product.prices.currency_prefix}{(product.prices.regular_price / 100).toFixed(2)}</del>
+                </div>
+                <div className="sale-price">
+                  {product.prices.currency_prefix}{(product.prices.sale_price / 100).toFixed(2)}
+               </div>
+               </div>
+              ) : (
+                  <div className="price">{product.prices.currency_prefix}{(product.prices.regular_price / 100).toFixed(2)}</div>
+              )}
                 <div className="quantity-container">
                   <label htmlFor={`quantity-${product.id}`}>{__('', 'tu-texto-localizacion')}</label>
                   <div className="quantity-input-container">
