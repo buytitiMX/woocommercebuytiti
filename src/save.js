@@ -2,7 +2,7 @@ const { useBlockProps } = wp.blockEditor;
 import { __ } from '@wordpress/i18n';
 
 const MyWooCommerceBlockSave = ({ attributes }) => {
-  const { products, selectedCategory, filter } = attributes;
+  const { products, selectedCategory, filter, showAllProducts } = attributes;
 
   // Utiliza la misma lógica de filtrado
   const filteredProducts = filter && selectedCategory
@@ -11,6 +11,9 @@ const MyWooCommerceBlockSave = ({ attributes }) => {
         product.categories.some(category => category.id === parseInt(selectedCategory, 10))
       )
     : products;
+
+  // Mostrar todos los productos o solo 10 según la opción seleccionada
+  const displayedProducts = showAllProducts ? filteredProducts : filteredProducts.slice(0, 10);
 
     return (
       <div {...useBlockProps.save()}>
@@ -21,7 +24,7 @@ const MyWooCommerceBlockSave = ({ attributes }) => {
           X Error
         </div>
         <div className="grid-container">
-          {filteredProducts.map((product) => (
+        {displayedProducts.map((product) => (
             <div key={product.id} className="product-item" data-product-id={product.id}>
               <div className="image-container">
                 {product.add_to_cart && product.add_to_cart.maximum && product.add_to_cart.maximum < 10 && (

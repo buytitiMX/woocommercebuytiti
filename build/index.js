@@ -25,6 +25,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 const MyWooCommerceBlock = ({
   attributes,
   setAttributes
@@ -36,6 +37,27 @@ const MyWooCommerceBlock = ({
     filter
   } = attributes;
   const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  const [showAllProducts, setShowAllProducts] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+
+  // Función para manejar el cambio en la opción de cantidad de productos
+  const handleShowAllProductsChange = newValue => {
+    setShowAllProducts(newValue);
+    // Aquí actualizamos los atributos del bloque con el nuevo valor
+    setAttributes({
+      ...attributes,
+      showAllProducts: newValue
+    });
+  };
+  const filterProducts = () => {
+    if (selectedCategory) {
+      return products.filter(product => product.categories && product.categories.some(category => category.id === parseInt(selectedCategory, 10)));
+    }
+    return products;
+  };
+  const filteredProducts = filterProducts();
+
+  // Mostrar todos los productos o solo 10 según la opción seleccionada
+  const displayedProducts = showAllProducts ? filteredProducts : filteredProducts.slice(0, 10);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     const fetchWooCommerceProducts = async () => {
       try {
@@ -159,7 +181,6 @@ const MyWooCommerceBlock = ({
       }, 5000);
     }
   };
-  const filteredProducts = filter && selectedCategory ? products.filter(product => product.categories && product.categories.some(category => category.id === parseInt(selectedCategory, 10))) : products;
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.useBlockProps)()
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InspectorControls, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.PanelBody, {
@@ -180,7 +201,18 @@ const MyWooCommerceBlock = ({
     onClick: handleFilterClick
   }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Filtrar', 'tu-texto-localizacion')), filter && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
     onClick: handleResetFilter
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Limpiar filtro', 'tu-texto-localizacion')))), loading ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Cargando productos...', 'tu-texto-localizacion')) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, showAlert && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Limpiar filtro', 'tu-texto-localizacion'))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.RadioControl, {
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Cantidad de productos', 'tu-texto-localizacion'),
+    selected: showAllProducts ? 'all' : '10',
+    options: [{
+      label: '10',
+      value: '10'
+    }, {
+      label: 'Todos',
+      value: 'all'
+    }],
+    onChange: value => handleShowAllProductsChange(value === 'all')
+  })), loading ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Cargando productos...', 'tu-texto-localizacion')) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, showAlert && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "alert",
     style: {
       backgroundColor: '#FF7942',
@@ -194,7 +226,7 @@ const MyWooCommerceBlock = ({
     }
   }, errorAlert), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "grid-container"
-  }, filteredProducts.map(product => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, displayedProducts.map(product => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     key: product.id,
     className: "product-item",
     "data-product-id": product.id
@@ -340,11 +372,15 @@ const MyWooCommerceBlockSave = ({
   const {
     products,
     selectedCategory,
-    filter
+    filter,
+    showAllProducts
   } = attributes;
 
   // Utiliza la misma lógica de filtrado
   const filteredProducts = filter && selectedCategory ? products.filter(product => product.categories && product.categories.some(category => category.id === parseInt(selectedCategory, 10))) : products;
+
+  // Mostrar todos los productos o solo 10 según la opción seleccionada
+  const displayedProducts = showAllProducts ? filteredProducts : filteredProducts.slice(0, 10);
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     ...useBlockProps.save()
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
@@ -355,7 +391,7 @@ const MyWooCommerceBlockSave = ({
     style: "display: none; background-color: red; color: white;"
   }, "X Error"), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "grid-container"
-  }, filteredProducts.map(product => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, displayedProducts.map(product => (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     key: product.id,
     className: "product-item",
     "data-product-id": product.id

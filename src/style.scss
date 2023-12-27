@@ -49,6 +49,7 @@
     height: 18rem;
     background-color: white;
     border: #E4E4E4.5px solid;
+    border-radius: 10px;
 }
 
 .image-container:hover{
@@ -87,6 +88,7 @@
   color: white;
   padding: 2px;
   font-size: 12px;
+  border-radius: 0px 5px;
 }
 
 .discount-box{
@@ -134,6 +136,7 @@
   font-weight: bold;
   padding-top: 6px;
   width: 13rem;
+  border-radius: 10px;
 }
 
 .btn-addtocart:hover{
@@ -148,14 +151,18 @@
   width: 2.5rem;
   margin-right: .5rem;
   border: #FF7942 solid 1px;
+  border-radius: 0px 5px;
 }
 
 .stock-alert{
-  color: #FF7942;
+  color: white;
   font-size: .8rem;
   border: solid #FF7942 1px;
   width: 7.1rem;
   text-align: center;
+  border-radius: 5px 0px;
+  background-color: #F58352;
+  font-weight: normal;
 }
 
 .new-label{
@@ -165,6 +172,7 @@
   font-size: .8rem;
   width: 3rem;
   text-align: center;
+  border-radius: 5px 0px;
 }
 
 .attribute-category{
@@ -178,4 +186,5 @@
 
 .categoria{
   color: #4A4A4A;
+  opacity: .8;
 }

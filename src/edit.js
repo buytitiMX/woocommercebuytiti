@@ -2,10 +2,34 @@ import { useEffect, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 import { useBlockProps, InspectorControls } from '@wordpress/block-editor';
 import { PanelBody, SelectControl, Button } from '@wordpress/components';
+import { RadioControl } from '@wordpress/components';
 
 const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
   const { products = [], categories, selectedCategory, filter } = attributes;
   const [loading, setLoading] = useState(true);
+  const [showAllProducts, setShowAllProducts] = useState(false);
+
+  // Función para manejar el cambio en la opción de cantidad de productos
+  const handleShowAllProductsChange = (newValue) => {
+    setShowAllProducts(newValue);
+    // Aquí actualizamos los atributos del bloque con el nuevo valor
+    setAttributes({ ...attributes, showAllProducts: newValue });
+  };
+
+  const filterProducts = () => {
+    if (selectedCategory) {
+      return products.filter(product =>
+        product.categories &&
+        product.categories.some(category => category.id === parseInt(selectedCategory, 10))
+      );
+    }
+    return products;
+  };
+
+  const filteredProducts = filterProducts();
+
+  // Mostrar todos los productos o solo 10 según la opción seleccionada
+  const displayedProducts = showAllProducts ? filteredProducts : filteredProducts.slice(0, 10);
 
   useEffect(() => {
     const fetchWooCommerceProducts = async () => {
@@ -137,14 +161,6 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
       }, 5000);
     }
   };
-  
-  
-  const filteredProducts = filter && selectedCategory
-    ? products.filter(product => 
-        product.categories && 
-        product.categories.some(category => category.id === parseInt(selectedCategory, 10))
-      )
-    : products;
 
   return (
     <div {...useBlockProps()}>
@@ -165,6 +181,15 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
             </Button>
           )}
         </PanelBody>
+        <RadioControl
+          label={__('Cantidad de productos', 'tu-texto-localizacion')}
+          selected={showAllProducts ? 'all' : '10'}
+          options={[
+            { label: '10', value: '10' },
+            { label: 'Todos', value: 'all' },
+          ]}
+          onChange={(value) => handleShowAllProductsChange(value === 'all')}
+        />
       </InspectorControls>
       {loading ? (
         <p>{__('Cargando productos...', 'tu-texto-localizacion')}</p>
@@ -181,7 +206,7 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
         </div>
       )}
           <div className="grid-container">
-            {filteredProducts.map((product) => (
+          {displayedProducts.map((product) => (
               <div key={product.id} className="product-item" data-product-id={product.id}>
                 <div className="image-container">
                 {product.add_to_cart && product.add_to_cart.maximum && product.add_to_cart.maximum < 10 && (
