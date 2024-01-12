@@ -17,11 +17,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
           throw new Error(`X Error: Este artículo solo tiene ${stockData.add_to_cart.maximum} unidades en stock`);
         }
 
-        const response = await fetch(`http://localhost/wordpress/carrito/?add-to-cart=${productId}&quantity=${quantity}`, {
+        const response = await fetch(`https://localhost/worpress/carrito/?add-to-cart=${productId}&quantity=${quantity}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Basic ' + btoa('ck_3ad4373504dc9d319abe572a905dbf53f4cc65eb' + ':' + 'cs_24cafca407a9a8318a8b85cec0e4b6e9d921bc71'),
+            'Authorization': 'Basic ' + btoa('ck_ac3c22c76f6c10391e07a5da81d149cff31b3969' + ':' + 'cs_5ceb43e67fc857aae274297111e3603e1c593131'),
           },
           body: JSON.stringify({
             product_id: productId,
@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }
     });
   });
+
   const imageContainers = document.querySelectorAll('.product-item .image-container');
 
   imageContainers.forEach((container) => {

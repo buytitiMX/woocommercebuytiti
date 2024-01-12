@@ -32,7 +32,10 @@
 	  "filter": {
 		"type": "boolean",
 		"default": false
+	  },
+	  "showAllProducts": {
+		"type": "boolean",
+		"default": false
 	  }
-	}
   }
-  
+}

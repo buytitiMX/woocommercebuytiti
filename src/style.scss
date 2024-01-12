@@ -8,13 +8,14 @@
 .wp-block-buytiti-buytitiwoocommerce {
 	color: #21759b;
 	padding: 1px;
-	max-width: 80% !important;
 }
 .product-item {
 	display: flex;
 	flex-direction: column;
-	width: 15rem;
+	width: 16rem;
   margin-bottom: 1.5rem;
+  height: 28rem !important; /* Establece la altura fija deseada */
+  margin-right: .5rem;
 }
 
 .container-price{
@@ -41,11 +42,12 @@
 	grid-template-rows: repeat(3, 1fr);
 	gap: 10px;
 	width: 100%; 
+  margin-top: 3rem;
 }
 
 .image-container{
 	position: relative;
-	width: 15rem;
+	width: 16rem;
     height: 18rem;
     background-color: white;
     border: #E4E4E4.5px solid;
@@ -68,6 +70,8 @@
   font-size: .8rem;
   text-align: left;
   padding-right: .5rem;
+  max-height: 3.2rem; /* Establece la altura máxima deseada */
+  overflow: hidden;
 }
 
 .sku{
@@ -93,15 +97,16 @@
 
 .discount-box{
   position: absolute;
-  top: 24px;
+  top: 28px;
   right: 0;
   background-color: white;
   color: #FF7942;
   padding: 1px;
   font-size: 12px;
   border: #FF7942 1px solid;
-  width: 2.3rem;
+  width: 2.5rem;
   text-align: center;
+  border-radius: 0px 0px 0px 7px;
 }
 
 .btn-addtocart:hover,
@@ -136,11 +141,12 @@
   font-weight: bold;
   padding-top: 6px;
   width: 13rem;
-  border-radius: 10px;
+  border-radius: 10px 0px;
 }
 
 .btn-addtocart:hover{
   cursor: pointer;
+  background-color: #FF7942 ;
 }
 
 .quantity-input-container{
@@ -148,10 +154,12 @@
 }
 
 .number-input{
-  width: 2.5rem;
+  width: 4rem !important;
+  padding: 10px !important;
   margin-right: .5rem;
-  border: #FF7942 solid 1px;
-  border-radius: 0px 5px;
+  border: #FF7942 solid 1px !important;
+  height: 2rem !important;
+  border-radius: 0px 5px !important;
 }
 
 .stock-alert{
@@ -177,7 +185,7 @@
 
 .attribute-category{
   text-transform: uppercase;
-  font-weight: 500;
+  font-weight: 600;
   color: black;
   font-size: .9rem;
   text-align: start;
@@ -187,4 +195,18 @@
 .categoria{
   color: #4A4A4A;
   opacity: .8;
+}
+
+.stock-info{
+  display: flex;
+  right: 0;
+  position: absolute;
+  bottom: 0;
+  border: solid 1px #FF7942;
+  color: coral;
+  background-color: #FDE5CB;
+  font-weight: bold;
+  border-radius: 10px 0px;
+  padding: 0px 3px 0px 3px;
+  font-size: .75rem;
 }

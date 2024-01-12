@@ -42,7 +42,7 @@ const MyWooCommerceBlock = ({
   // Función para manejar el cambio en la opción de cantidad de productos
   const handleShowAllProductsChange = newValue => {
     setShowAllProducts(newValue);
-    // Aquí actualizamos los atributos del bloque con el nuevo valor
+    // Aquí actualizamos solo el atributo showAllProducts
     setAttributes({
       ...attributes,
       showAllProducts: newValue
@@ -61,12 +61,16 @@ const MyWooCommerceBlock = ({
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     const fetchWooCommerceProducts = async () => {
       try {
-        const response = await fetch('http://localhost/wordpress/wp-json/wc/store/products?per_page=100');
-        if (!response.ok) {
-          throw new Error(`Error en la solicitud: ${response.statusText}`);
+        let allProducts = [];
+        for (let page = 1; page <= 20; page++) {
+          const response = await fetch(`http://localhost/wordpress/wp-json/wc/store/products?per_page=100&page=${page}`);
+          if (!response.ok) {
+            throw new Error(`Error en la solicitud: ${response.statusText}`);
+          }
+          const data = await response.json();
+          allProducts = [...allProducts, ...data];
         }
-        const data = await response.json();
-        const productsWithIsNew = await Promise.all(data.map(async product => {
+        const productsWithIsNew = await Promise.all(allProducts.map(async product => {
           try {
             const productResponse = await fetch(`http://localhost/wordpress/wp-json/wp/v2/product/${product.id}`);
             if (!productResponse.ok) {
@@ -89,12 +93,22 @@ const MyWooCommerceBlock = ({
             return product;
           }
         }));
+
+        // Filtrar productos nuevos
+        const newProducts = productsWithIsNew.filter(product => product.isNew);
+
+        // Ordenar los productos por fecha y hora (de más reciente a más antiguo)
+        const sortedProducts = productsWithIsNew.sort((a, b) => {
+          const dateA = new Date(a.date).getTime();
+          const dateB = new Date(b.date).getTime();
+          return dateB - dateA;
+        });
         setAttributes({
-          products: productsWithIsNew
+          products: sortedProducts
         });
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching WooCommerce products:', error.message);
+        console.error("Error fetching WooCommerce products:", error.message);
         setLoading(false);
       }
     };
@@ -155,10 +169,10 @@ const MyWooCommerceBlock = ({
         return;
       }
       const response = await fetch(`http://localhost/wordpress/carrito/?add-to-cart=${productId}&quantity=${quantity}`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Basic ' + btoa('ck_3ad4373504dc9d319abe572a905dbf53f4cc65eb' + ':' + 'cs_24cafca407a9a8318a8b85cec0e4b6e9d921bc71')
+          "Content-Type": "application/json",
+          Authorization: "Basic " + btoa("ck_3ad4373504dc9d319abe572a905dbf53f4cc65eb" + ":" + "cs_24cafca407a9a8318a8b85cec0e4b6e9d921bc71")
         },
         body: JSON.stringify({
           product_id: productId,
@@ -174,7 +188,7 @@ const MyWooCommerceBlock = ({
       }, 5000);
       console.log(`Producto agregado al carrito: ${productId}`);
     } catch (error) {
-      console.error('Error al añadir el producto al carrito:', error.message);
+      console.error("Error al añadir el producto al carrito:", error.message);
       setErrorAlert(`Error: ${error.message}`);
       setTimeout(() => {
         setErrorAlert(false);
@@ -184,13 +198,13 @@ const MyWooCommerceBlock = ({
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     ...(0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.useBlockProps)()
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_2__.InspectorControls, null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.PanelBody, {
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Filtro de categoría', 'tu-texto-localizacion')
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Filtro de categoría", "tu-texto-localizacion")
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.SelectControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Selecciona una categoría', 'tu-texto-localizacion'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Selecciona una categoría", "tu-texto-localizacion"),
     value: selectedCategory,
     options: [{
-      label: 'Ninguna',
-      value: ''
+      label: "Ninguna",
+      value: ""
     }, ...categories.map(category => ({
       label: category.name,
       value: category.id
@@ -199,30 +213,30 @@ const MyWooCommerceBlock = ({
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
     isPrimary: true,
     onClick: handleFilterClick
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Filtrar', 'tu-texto-localizacion')), filter && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Filtrar", "tu-texto-localizacion")), filter && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
     onClick: handleResetFilter
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Limpiar filtro', 'tu-texto-localizacion'))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.RadioControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Cantidad de productos', 'tu-texto-localizacion'),
-    selected: showAllProducts ? 'all' : '10',
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Limpiar filtro", "tu-texto-localizacion"))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.RadioControl, {
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Cantidad de productos", "tu-texto-localizacion"),
+    selected: showAllProducts ? "all" : "10",
     options: [{
-      label: '10',
-      value: '10'
+      label: "10",
+      value: "10"
     }, {
-      label: 'Todos',
-      value: 'all'
+      label: "Todos",
+      value: "all"
     }],
-    onChange: value => handleShowAllProductsChange(value === 'all')
-  })), loading ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Cargando productos...', 'tu-texto-localizacion')) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, showAlert && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    onChange: value => handleShowAllProductsChange(value === "all")
+  })), loading ? (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Cargando productos...", "tu-texto-localizacion")) : (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, showAlert && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "alert",
     style: {
-      backgroundColor: '#FF7942',
-      color: 'white'
+      backgroundColor: "#FF7942",
+      color: "white"
     }
   }, "Se a\xF1adi\xF3 tu producto correctamente"), errorAlert && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "alert",
     style: {
-      backgroundColor: '#FF0000',
-      color: 'white'
+      backgroundColor: "#FF0000",
+      color: "white"
     }
   }, errorAlert), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "grid-container"
@@ -234,11 +248,11 @@ const MyWooCommerceBlock = ({
     className: "image-container"
   }, product.add_to_cart && product.add_to_cart.maximum && product.add_to_cart.maximum < 10 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "stock-alert"
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Pocas existencias', 'tu-texto-localizacion')), product.isNew && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Pocas existencias", "tu-texto-localizacion")), product.isNew && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "new-label"
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Nuevo', 'tu-texto-localizacion')), product.prices.sale_price !== product.prices.regular_price && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Nuevo", "tu-texto-localizacion")), product.prices.sale_price !== product.prices.regular_price && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "offer-box"
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Oferta', 'tu-texto-localizacion')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Oferta", "tu-texto-localizacion")), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "discount-box"
   }, `-${Math.round((product.prices.regular_price - product.prices.sale_price) / product.prices.regular_price * 100)}%`)), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("a", {
     href: product.permalink,
@@ -254,7 +268,9 @@ const MyWooCommerceBlock = ({
     onMouseOut: e => {
       e.currentTarget.src = product.images[0].src;
     }
-  }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  })), product.add_to_cart && product.add_to_cart.maximum && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "stock-info"
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Disponibles", "tu-texto-localizacion"), ":", " ", product.add_to_cart.maximum)), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "attribute-category"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("span", null, product.attributeName), product.categoryName && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("span", null, " - "), product.categoryName && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("span", {
     className: "categoria"
@@ -274,7 +290,7 @@ const MyWooCommerceBlock = ({
     className: "quantity-container"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", {
     htmlFor: `quantity-${product.id}`
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('', 'tu-texto-localizacion')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("", "tu-texto-localizacion")), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "quantity-input-container"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("input", {
     className: "number-input",
@@ -287,7 +303,7 @@ const MyWooCommerceBlock = ({
     className: "btn-addtocart",
     isPrimary: true,
     onClick: () => handleAddToCart(product.id)
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Añadir al carrito', 'tu-texto-localizacion')))))))));
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Añadir al carrito", "tu-texto-localizacion")))))))));
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MyWooCommerceBlock);
 
@@ -375,9 +391,13 @@ const MyWooCommerceBlockSave = ({
     filter,
     showAllProducts
   } = attributes;
-
-  // Utiliza la misma lógica de filtrado
-  const filteredProducts = filter && selectedCategory ? products.filter(product => product.categories && product.categories.some(category => category.id === parseInt(selectedCategory, 10))) : products;
+  const filterProducts = () => {
+    if (selectedCategory) {
+      return products.filter(product => product.categories && product.categories.some(category => category.id === parseInt(selectedCategory, 10)));
+    }
+    return products;
+  };
+  const filteredProducts = filterProducts();
 
   // Mostrar todos los productos o solo 10 según la opción seleccionada
   const displayedProducts = showAllProducts ? filteredProducts : filteredProducts.slice(0, 10);
@@ -399,11 +419,11 @@ const MyWooCommerceBlockSave = ({
     className: "image-container"
   }, product.add_to_cart && product.add_to_cart.maximum && product.add_to_cart.maximum < 10 && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "stock-alert"
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Pocas existencias', 'tu-texto-localizacion')), product.isNew && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Pocas existencias", "tu-texto-localizacion")), product.isNew && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "new-label"
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Nuevo', 'tu-texto-localizacion')), product.prices.sale_price !== product.prices.regular_price && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Nuevo", "tu-texto-localizacion")), product.prices.sale_price !== product.prices.regular_price && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "offer-box"
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Oferta', 'tu-texto-localizacion')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Oferta", "tu-texto-localizacion")), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "discount-box"
   }, `-${Math.round((product.prices.regular_price - product.prices.sale_price) / product.prices.regular_price * 100)}%`)), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("a", {
     href: product.permalink,
@@ -415,7 +435,9 @@ const MyWooCommerceBlockSave = ({
     "data-original-src": product.images[0].src,
     "data-hover-src": product.images[1].src,
     alt: product.name
-  }))), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  })), product.add_to_cart && product.add_to_cart.maximum && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "stock-info"
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Disponibles", "tu-texto-localizacion"), ":", " ", product.add_to_cart.maximum)), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "attribute-category"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("span", null, product.attributeName), product.categoryName && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("span", null, " - "), product.categoryName && (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("span", {
     className: "categoria"
@@ -435,7 +457,7 @@ const MyWooCommerceBlockSave = ({
     className: "quantity-container"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("label", {
     htmlFor: `quantity-${product.id}`
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('', 'tu-texto-localizacion')), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("", "tu-texto-localizacion")), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "quantity-input-container"
   }, (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("input", {
     className: "number-input",
@@ -446,7 +468,7 @@ const MyWooCommerceBlockSave = ({
     value: "1"
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
     className: "btn-addtocart"
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Añadir al carrito', 'tu-texto-localizacion'))))))));
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Añadir al carrito", "tu-texto-localizacion"))))))));
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MyWooCommerceBlockSave);
 
@@ -520,7 +542,7 @@ module.exports = window["wp"]["i18n"];
   \************************/
 /***/ ((module) => {
 
-module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"buytiti/buytitiwoocommerce","version":"0.1.0","title":"Buytiti - WooCommerce","category":"widgets","icon":"store","description":"Este plugin añade la estructura para traer los productos activos de woocommerce","example":{},"supports":{"html":false},"textdomain":"buytitiwoocommerce","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js","attributes":{"products":{"type":"array","default":[]},"categories":{"type":"array","default":[]},"selectedCategory":{"type":"string","default":""},"filter":{"type":"boolean","default":false}}}');
+module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"buytiti/buytitiwoocommerce","version":"0.1.0","title":"Buytiti - WooCommerce","category":"widgets","icon":"store","description":"Este plugin añade la estructura para traer los productos activos de woocommerce","example":{},"supports":{"html":false},"textdomain":"buytitiwoocommerce","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js","attributes":{"products":{"type":"array","default":[]},"categories":{"type":"array","default":[]},"selectedCategory":{"type":"string","default":""},"filter":{"type":"boolean","default":false},"showAllProducts":{"type":"boolean","default":false}}}');
 
 /***/ })
 
