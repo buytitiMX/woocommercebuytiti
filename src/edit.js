@@ -17,8 +17,11 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
 	};
 
 	const filterProducts = () => {
+		let filtered = products;
+
+		// Filtrar por categoría si se seleccionó una
 		if (selectedCategory) {
-			return products.filter(
+			filtered = filtered.filter(
 				(product) =>
 					product.categories &&
 					product.categories.some(
@@ -26,7 +29,15 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
 					),
 			);
 		}
-		return products;
+
+		// Filtrar por productos en oferta
+		if (filter === "on_sale") {
+			filtered = filtered.filter(
+				(product) => product.prices.sale_price !== product.prices.regular_price,
+			);
+		}
+
+		return filtered;
 	};
 
 	const filteredProducts = filterProducts();
@@ -36,80 +47,92 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
 		? filteredProducts
 		: filteredProducts.slice(0, 10);
 
-		useEffect(() => {
-			const fetchWooCommerceProducts = async () => {
-			  try {
+	useEffect(() => {
+		const fetchWooCommerceProducts = async () => {
+			try {
 				let allProducts = [];
 				for (let page = 1; page <= 20; page++) {
-				  const response = await fetch(`http://localhost/wordpress/wp-json/wc/store/products?per_page=100&page=${page}`);
-		  
-				  if (!response.ok) {
-					throw new Error(`Error en la solicitud: ${response.statusText}`);
-				  }
-		  
-				  const data = await response.json();
-				  allProducts = [...allProducts, ...data];
-				}
-		  
-				const productsWithIsNew = await Promise.all(
-				  allProducts.map(async (product) => {
-					try {
-					  const productResponse = await fetch(`http://localhost/wordpress/wp-json/wp/v2/product/${product.id}`);
-					  if (!productResponse.ok) {
-						throw new Error(`Error en la solicitud de producto: ${productResponse.statusText}`);
-					  }
-					  const productData = await productResponse.json();
-					  const isNew = isProductNew(productData.date);
-			  
-					  // Add attribute name and category to the product object
-					  const attributeName = product.attributes[0]?.name || 'Buytiti';
-					  const categoryName = product.categories[0]?.name;
-			  
-					  return { ...product, isNew, attributeName, categoryName };
-					} catch (error) {
-					  console.error(`Error al obtener información del producto ${product.id}: ${error.message}`);
-					  return product;
-					}
-				  })
-				);
-		  
-				 // Filtrar productos nuevos
-				 const newProducts = productsWithIsNew.filter((product) => product.isNew);
+					const response = await fetch(
+						`http://localhost/wordpress/wp-json/wc/store/products?per_page=100&page=${page}`,
+					);
 
-				 // Ordenar los productos por fecha y hora (de más reciente a más antiguo)
-				 const sortedProducts = productsWithIsNew.sort((a, b) => {
-				   const dateA = new Date(a.date).getTime();
-				   const dateB = new Date(b.date).getTime();
-				   return dateB - dateA;
-				 });
-			 
-				 setAttributes({ products: sortedProducts });
-				 setLoading(false);
-			   } catch (error) {
-				 console.error("Error fetching WooCommerce products:", error.message);
-				 setLoading(false);
-			   }
-			 };
-		  
-			const fetchWooCommerceCategories = async () => {
-			  try {
-				const response = await fetch('http://localhost/wordpress/wp-json/wc/store/products/categories');
-		  
-				if (!response.ok) {
-				  throw new Error(`Error en la solicitud: ${response.statusText}`);
+					if (!response.ok) {
+						throw new Error(`Error en la solicitud: ${response.statusText}`);
+					}
+
+					const data = await response.json();
+					allProducts = [...allProducts, ...data];
 				}
-		  
+
+				const productsWithIsNew = await Promise.all(
+					allProducts.map(async (product) => {
+						try {
+							const productResponse = await fetch(
+								`http://localhost/wordpress/wp-json/wp/v2/product/${product.id}`,
+							);
+							if (!productResponse.ok) {
+								throw new Error(
+									`Error en la solicitud de producto: ${productResponse.statusText}`,
+								);
+							}
+							const productData = await productResponse.json();
+							const isNew = isProductNew(productData.date);
+
+							// Add attribute name and category to the product object
+							const attributeName = product.attributes[0]?.name || "Buytiti";
+							const categoryName = product.categories[0]?.name;
+
+							return { ...product, isNew, attributeName, categoryName };
+						} catch (error) {
+							console.error(
+								`Error al obtener información del producto ${product.id}: ${error.message}`,
+							);
+							return product;
+						}
+					}),
+				);
+
+				// Filtrar productos nuevos
+				const newProducts = productsWithIsNew.filter(
+					(product) => product.isNew,
+				);
+
+				// Ordenar los productos por fecha y hora (de más reciente a más antiguo)
+				const sortedProducts = productsWithIsNew.sort((a, b) => {
+					const dateA = new Date(a.date).getTime();
+					const dateB = new Date(b.date).getTime();
+					return dateB - dateA;
+				});
+
+				setAttributes({ products: sortedProducts });
+				setLoading(false);
+			} catch (error) {
+				console.error("Error fetching WooCommerce products:", error.message);
+				setLoading(false);
+			}
+		};
+
+		const fetchWooCommerceCategories = async () => {
+			try {
+				const response = await fetch(
+					"http://localhost/wordpress/wp-json/wc/store/products/categories",
+				);
+
+				if (!response.ok) {
+					throw new Error(`Error en la solicitud: ${response.statusText}`);
+				}
+
 				const data = await response.json();
 				setAttributes({ categories: data });
-			  } catch (error) {
-				console.error('Error fetching WooCommerce categories:', error.message);
-			  }
-			};
-		  
-			fetchWooCommerceProducts();
-			fetchWooCommerceCategories();
-		  }, [setAttributes]);
-			
+			} catch (error) {
+				console.error("Error fetching WooCommerce categories:", error.message);
+			}
+		};
+
+		fetchWooCommerceProducts();
+		fetchWooCommerceCategories();
+	}, [setAttributes]);
+
 	const handleCategoryChange = (value) => {
 		setAttributes({ selectedCategory: value });
 	};
@@ -119,7 +142,7 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
 	};
 
 	const handleResetFilter = () => {
-		setAttributes({ filter: false, selectedCategory: '' });
+		setAttributes({ filter: false, selectedCategory: "" });
 	};
 
 	const isProductNew = (productDate) => {
@@ -214,6 +237,20 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
 						]}
 						onChange={handleCategoryChange}
 					/>
+					<SelectControl
+						label={__("Selecciona un filtro", "tu-texto-localizacion")}
+						value={filter}
+						options={[
+							{ label: "Ninguno", value: "" },
+							{ label: "En oferta", value: "on_sale" },
+							...categories.map((category) => ({
+								label: category.name,
+								value: category.id,
+							})),
+						]}
+						onChange={(value) => setAttributes({ filter: value })}
+					/>
+
 					<Button isPrimary onClick={handleFilterClick}>
 						{__("Filtrar", "tu-texto-localizacion")}
 					</Button>

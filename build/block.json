@@ -30,8 +30,8 @@
       "default": ""
     },
     "filter": {
-      "type": "boolean",
-      "default": false
+      "type": "string",
+      "default": ""
     },
     "showAllProducts": {
       "type": "boolean",

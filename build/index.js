@@ -49,10 +49,18 @@ const MyWooCommerceBlock = ({
     });
   };
   const filterProducts = () => {
+    let filtered = products;
+
+    // Filtrar por categoría si se seleccionó una
     if (selectedCategory) {
-      return products.filter(product => product.categories && product.categories.some(category => category.id === parseInt(selectedCategory, 10)));
+      filtered = filtered.filter(product => product.categories && product.categories.some(category => category.id === parseInt(selectedCategory, 10)));
     }
-    return products;
+
+    // Filtrar por productos en oferta
+    if (filter === "on_sale") {
+      filtered = filtered.filter(product => product.prices.sale_price !== product.prices.regular_price);
+    }
+    return filtered;
   };
   const filteredProducts = filterProducts();
 
@@ -80,7 +88,7 @@ const MyWooCommerceBlock = ({
             const isNew = isProductNew(productData.date);
 
             // Add attribute name and category to the product object
-            const attributeName = product.attributes[0]?.name || 'Buytiti';
+            const attributeName = product.attributes[0]?.name || "Buytiti";
             const categoryName = product.categories[0]?.name;
             return {
               ...product,
@@ -114,7 +122,7 @@ const MyWooCommerceBlock = ({
     };
     const fetchWooCommerceCategories = async () => {
       try {
-        const response = await fetch('http://localhost/wordpress/wp-json/wc/store/products/categories');
+        const response = await fetch("http://localhost/wordpress/wp-json/wc/store/products/categories");
         if (!response.ok) {
           throw new Error(`Error en la solicitud: ${response.statusText}`);
         }
@@ -123,7 +131,7 @@ const MyWooCommerceBlock = ({
           categories: data
         });
       } catch (error) {
-        console.error('Error fetching WooCommerce categories:', error.message);
+        console.error("Error fetching WooCommerce categories:", error.message);
       }
     };
     fetchWooCommerceProducts();
@@ -142,7 +150,7 @@ const MyWooCommerceBlock = ({
   const handleResetFilter = () => {
     setAttributes({
       filter: false,
-      selectedCategory: ''
+      selectedCategory: ""
     });
   };
   const isProductNew = productDate => {
@@ -210,6 +218,22 @@ const MyWooCommerceBlock = ({
       value: category.id
     }))],
     onChange: handleCategoryChange
+  }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.SelectControl, {
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Selecciona un filtro", "tu-texto-localizacion"),
+    value: filter,
+    options: [{
+      label: "Ninguno",
+      value: ""
+    }, {
+      label: "En oferta",
+      value: "on_sale"
+    }, ...categories.map(category => ({
+      label: category.name,
+      value: category.id
+    }))],
+    onChange: value => setAttributes({
+      filter: value
+    })
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
     isPrimary: true,
     onClick: handleFilterClick
@@ -392,10 +416,18 @@ const MyWooCommerceBlockSave = ({
     showAllProducts
   } = attributes;
   const filterProducts = () => {
+    let filtered = products;
+
+    // Filtrar por categoría si se seleccionó una
     if (selectedCategory) {
-      return products.filter(product => product.categories && product.categories.some(category => category.id === parseInt(selectedCategory, 10)));
+      filtered = filtered.filter(product => product.categories && product.categories.some(category => category.id === parseInt(selectedCategory, 10)));
     }
-    return products;
+
+    // Filtrar por productos en oferta
+    if (filter === 'on_sale') {
+      filtered = filtered.filter(product => product.prices.sale_price !== product.prices.regular_price);
+    }
+    return filtered;
   };
   const filteredProducts = filterProducts();
 
@@ -542,7 +574,7 @@ module.exports = window["wp"]["i18n"];
   \************************/
 /***/ ((module) => {
 
-module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"buytiti/buytitiwoocommerce","version":"0.1.0","title":"Buytiti - WooCommerce","category":"widgets","icon":"store","description":"Este plugin añade la estructura para traer los productos activos de woocommerce","example":{},"supports":{"html":false},"textdomain":"buytitiwoocommerce","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js","attributes":{"products":{"type":"array","default":[]},"categories":{"type":"array","default":[]},"selectedCategory":{"type":"string","default":""},"filter":{"type":"boolean","default":false},"showAllProducts":{"type":"boolean","default":false}}}');
+module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":3,"name":"buytiti/buytitiwoocommerce","version":"0.1.0","title":"Buytiti - WooCommerce","category":"widgets","icon":"store","description":"Este plugin añade la estructura para traer los productos activos de woocommerce","example":{},"supports":{"html":false},"textdomain":"buytitiwoocommerce","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css","viewScript":"file:./view.js","attributes":{"products":{"type":"array","default":[]},"categories":{"type":"array","default":[]},"selectedCategory":{"type":"string","default":""},"filter":{"type":"string","default":""},"showAllProducts":{"type":"boolean","default":false}}}');
 
 /***/ })
 

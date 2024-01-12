@@ -5,8 +5,11 @@ const MyWooCommerceBlockSave = ({ attributes }) => {
 	const { products, selectedCategory, filter, showAllProducts } = attributes;
   
 	const filterProducts = () => {
+		let filtered = products;
+	
+		// Filtrar por categoría si se seleccionó una
 		if (selectedCategory) {
-			return products.filter(
+			filtered = filtered.filter(
 				(product) =>
 					product.categories &&
 					product.categories.some(
@@ -14,9 +17,17 @@ const MyWooCommerceBlockSave = ({ attributes }) => {
 					),
 			);
 		}
-		return products;
+	
+		// Filtrar por productos en oferta
+		if (filter === 'on_sale') {
+			filtered = filtered.filter(
+				(product) => product.prices.sale_price !== product.prices.regular_price,
+			);
+		}
+	
+		return filtered;
 	};
-
+	
 	const filteredProducts = filterProducts();
   
 	// Mostrar todos los productos o solo 10 según la opción seleccionada
