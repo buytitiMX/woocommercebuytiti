@@ -179,7 +179,7 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
 			}
 
 			const response = await fetch(
-				`http://localhost/wordpress/carrito/?add-to-cart=${productId}&quantity=${quantity}`,
+				`/wordpress/carrito/?add-to-cart=${productId}&quantity=${quantity}`,
 				{
 					method: "POST",
 					headers: {
@@ -187,9 +187,9 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
 						Authorization:
 							"Basic " +
 							btoa(
-								"ck_3ad4373504dc9d319abe572a905dbf53f4cc65eb" +
+								"ck_ff9474de189b37a7aa63b4a9ea3279c5685d3749" +
 									":" +
-									"cs_24cafca407a9a8318a8b85cec0e4b6e9d921bc71",
+									"cs_aaab9f6527fdc3f132bdb2c10516d08e1c4222bd",
 							),
 					},
 					body: JSON.stringify({
@@ -387,7 +387,22 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
 											id={`quantity-${product.id}`}
 											name={`quantity-${product.id}`}
 											min="1"
+											max={
+												product.add_to_cart
+													? product.add_to_cart.maximum
+													: undefined
+											}
 											defaultValue="1"
+											onChange={(e) => {
+												if (
+													product.add_to_cart &&
+													product.add_to_cart.maximum
+												) {
+													if (e.target.value > product.add_to_cart.maximum) {
+														e.target.value = product.add_to_cart.maximum;
+													}
+												}
+											}}
 										/>
 										<Button
 											className="btn-addtocart"

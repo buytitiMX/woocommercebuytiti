@@ -158,13 +158,12 @@
 }
 
 .stock-alert {
-  color: white;
   font-size: 0.8rem;
-  border: solid #FF7942 1px;
+  border: solid #B0EDE7 1px;
   width: 7.1rem;
   text-align: center;
   border-radius: 5px 0px;
-  background-color: #F58352;
+  background-color: #B0EDE7;
   font-weight: normal;
 }
 

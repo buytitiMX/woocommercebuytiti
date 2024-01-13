@@ -3,10 +3,10 @@ import { __ } from "@wordpress/i18n";
 
 const MyWooCommerceBlockSave = ({ attributes }) => {
 	const { products, selectedCategory, filter, showAllProducts } = attributes;
-  
+
 	const filterProducts = () => {
 		let filtered = products;
-	
+
 		// Filtrar por categoría si se seleccionó una
 		if (selectedCategory) {
 			filtered = filtered.filter(
@@ -17,22 +17,24 @@ const MyWooCommerceBlockSave = ({ attributes }) => {
 					),
 			);
 		}
-	
+
 		// Filtrar por productos en oferta
-		if (filter === 'on_sale') {
+		if (filter === "on_sale") {
 			filtered = filtered.filter(
 				(product) => product.prices.sale_price !== product.prices.regular_price,
 			);
 		}
-	
+
 		return filtered;
 	};
-	
+
 	const filteredProducts = filterProducts();
-  
+
 	// Mostrar todos los productos o solo 10 según la opción seleccionada
-	const displayedProducts = showAllProducts ? filteredProducts : filteredProducts.slice(0, 10);
-  
+	const displayedProducts = showAllProducts
+		? filteredProducts
+		: filteredProducts.slice(0, 10);
+
 	return (
 		<div {...useBlockProps.save()}>
 			<div
@@ -94,10 +96,10 @@ const MyWooCommerceBlockSave = ({ attributes }) => {
 								/>
 							</a>
 							{product.add_to_cart && product.add_to_cart.maximum && (
-										<div className="stock-info">
-											{__("Disponibles", "tu-texto-localizacion")}:{" "}
-											{product.add_to_cart.maximum}
-										</div>
+								<div className="stock-info">
+									{__("Disponibles", "tu-texto-localizacion")}:{" "}
+									{product.add_to_cart.maximum}
+								</div>
 							)}
 						</div>
 						<div className="attribute-category">
@@ -139,7 +141,17 @@ const MyWooCommerceBlockSave = ({ attributes }) => {
 									id={`quantity-${product.id}`}
 									name={`quantity-${product.id}`}
 									min="1"
-									value="1"
+									max={
+										product.add_to_cart
+											? product.add_to_cart.maximum
+											: undefined
+									}
+									Value="1"
+									data-max={
+										product.add_to_cart
+											? product.add_to_cart.maximum
+											: undefined
+									}
 								/>
 								<button className="btn-addtocart">
 									{__("Añadir al carrito", "tu-texto-localizacion")}

@@ -176,11 +176,11 @@ const MyWooCommerceBlock = ({
         }, 4000);
         return;
       }
-      const response = await fetch(`http://localhost/wordpress/carrito/?add-to-cart=${productId}&quantity=${quantity}`, {
+      const response = await fetch(`/wordpress/carrito/?add-to-cart=${productId}&quantity=${quantity}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Basic " + btoa("ck_3ad4373504dc9d319abe572a905dbf53f4cc65eb" + ":" + "cs_24cafca407a9a8318a8b85cec0e4b6e9d921bc71")
+          Authorization: "Basic " + btoa("ck_ff9474de189b37a7aa63b4a9ea3279c5685d3749" + ":" + "cs_aaab9f6527fdc3f132bdb2c10516d08e1c4222bd")
         },
         body: JSON.stringify({
           product_id: productId,
@@ -322,7 +322,15 @@ const MyWooCommerceBlock = ({
     id: `quantity-${product.id}`,
     name: `quantity-${product.id}`,
     min: "1",
-    defaultValue: "1"
+    max: product.add_to_cart ? product.add_to_cart.maximum : undefined,
+    defaultValue: "1",
+    onChange: e => {
+      if (product.add_to_cart && product.add_to_cart.maximum) {
+        if (e.target.value > product.add_to_cart.maximum) {
+          e.target.value = product.add_to_cart.maximum;
+        }
+      }
+    }
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_3__.Button, {
     className: "btn-addtocart",
     isPrimary: true,
@@ -424,7 +432,7 @@ const MyWooCommerceBlockSave = ({
     }
 
     // Filtrar por productos en oferta
-    if (filter === 'on_sale') {
+    if (filter === "on_sale") {
       filtered = filtered.filter(product => product.prices.sale_price !== product.prices.regular_price);
     }
     return filtered;
@@ -497,7 +505,9 @@ const MyWooCommerceBlockSave = ({
     id: `quantity-${product.id}`,
     name: `quantity-${product.id}`,
     min: "1",
-    value: "1"
+    max: product.add_to_cart ? product.add_to_cart.maximum : undefined,
+    Value: "1",
+    "data-max": product.add_to_cart ? product.add_to_cart.maximum : undefined
   }), (0,react__WEBPACK_IMPORTED_MODULE_0__.createElement)("button", {
     className: "btn-addtocart"
   }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Añadir al carrito", "tu-texto-localizacion"))))))));
