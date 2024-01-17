@@ -16,6 +16,12 @@
   margin-bottom: 1.5rem;
   height: 28rem !important; /* Establece la altura fija deseada */
   margin-right: .5rem;
+  transition: margin-top 0.1s ease;
+}
+
+.product-item:hover{
+  margin-top: -.3rem;
+  cursor: pointer;
 }
 
 .container-price{
@@ -63,6 +69,12 @@
   margin-top: 3rem;
 	padding: .5rem;
   margin-left: 1.5rem;
+  transition: 1.5s;
+}
+
+.img-size:hover{
+  transform: scale(1.3);
+
 }
 
 .name-buytiti{
@@ -109,8 +121,7 @@
   border-radius: 0px 0px 0px 7px;
 }
 
-.btn-addtocart:hover,
-.btn-addtocart:focus {
+.btn-addtocart:hover {
   -webkit-animation: pulse 1s;
           animation: pulse 1s;
   box-shadow: 0 0 0 1em rgba(255, 255, 255, 0);
@@ -208,4 +219,142 @@
   border-radius: 10px 0px;
   padding: 0px 3px 0px 3px;
   font-size: .75rem;
+}
+
+/* Responsive Design*/
+
+/* Estilos para pantallas medianas */
+@media screen and (max-width: 800px) {
+  .grid-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+/* Estilos para pantallas medianas */
+@media screen and (max-width: 850px) {
+  .grid-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn-addtocart{
+    padding: 0;
+    padding-top: 6px;
+  }
+}
+
+/* Estilos para pantallas pequeñas */
+@media screen and (max-width: 500px) {
+  .product-item {
+    display: flex;
+    flex-wrap: wrap;
+    width: 9rem;
+    margin-bottom: .5rem;
+    height: 32rem !important;
+    margin-right: 3.3rem;
+  }
+
+  .image-container{
+    position: relative;
+    width: 12.5rem;
+    height: 18rem;
+    background-color: white;
+    border: #E4E4E4 0.5px solid;
+    border-radius: 10px;
+  }
+
+  .img-size{
+    width: 12rem;
+    margin-left: 0rem;
+    margin-top: 1.6rem;
+  }
+
+  .offer-box{
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .discount-box{
+    font-size: 12px;
+    width: 3rem;
+  }
+
+  .name-buytiti{
+    font-size: 1rem;
+  }
+
+  .btn-addtocart{
+    width: 8.5rem;
+    font-size: .9rem;
+    padding: 0;
+    padding-top: 5px;
+  }
+
+  .number-input{
+    width: 3rem !important;
+    padding: 4px !important;
+  }
+
+  .sku{
+    font-size: 1rem;
+  }
+}
+
+/* Estilos para pantallas pequeñas */
+@media screen and (max-width: 400px) {
+  .product-item {
+    display: flex;
+    flex-wrap: wrap;
+    width: 8rem;
+    margin-bottom: 0.5rem;
+    height: 34rem !important;
+    margin-right: 3.3rem;
+  }
+
+  .image-container{
+    position: relative;
+    width: 11rem;
+    height: 18rem;
+    background-color: white;
+    border: #E4E4E4 0.5px solid;
+    border-radius: 10px;
+  }
+
+  .img-size{
+    width: 11rem;
+    margin-left: 0rem;
+    margin-top: 2rem;
+  }
+
+  .offer-box{
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .discount-box{
+    font-size: 12px;
+    width: 3rem;
+  }
+
+  .name-buytiti{
+    font-size: 1rem;
+  }
+
+  .btn-addtocart{
+    width: 7.4rem;
+    font-size: .9rem;
+    padding: 0;
+    padding-top: 5px;
+  }
+
+  .number-input{
+    width: 3rem !important;
+    padding: 4px !important;
+  }
+
+  .sku{
+    font-size: 1rem;
+  }
 }

@@ -400,12 +400,6 @@ const MyWooCommerceBlock = ({ attributes, setAttributes }) => {
 											className="img-size"
 											src={product.images[0].src}
 											alt={product.name}
-											onMouseOver={(e) => {
-												e.currentTarget.src = product.images[1].src;
-											}}
-											onMouseOut={(e) => {
-												e.currentTarget.src = product.images[0].src;
-											}}
 										/>
 									</a>
 									{product.add_to_cart && product.add_to_cart.maximum && (

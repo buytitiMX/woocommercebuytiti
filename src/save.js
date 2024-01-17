@@ -91,7 +91,6 @@ const MyWooCommerceBlockSave = ({ attributes }) => {
 									className="img-size"
 									src={product.images[0].src}
 									data-original-src={product.images[0].src}
-									data-hover-src={product.images[1].src}
 									alt={product.name}
 								/>
 							</a>

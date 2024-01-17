@@ -65,20 +65,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
       }
     });
   });
-
-  const imageContainers = document.querySelectorAll('.product-item .image-container');
-
-  imageContainers.forEach((container) => {
-    const img = container.querySelector('img');
-
-    img.addEventListener('mouseover', () => {
-      img.src = img.dataset.hoverSrc;
-    });
-
-    img.addEventListener('mouseout', () => {
-      img.src = img.dataset.originalSrc;
-    });
-  });
   
   const quantityInputs = document.querySelectorAll('.product-item input[type="number"]');
 
